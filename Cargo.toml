@@ -1,6 +1,6 @@
 [package]
 name = "qed"
-version = "0.0.1"
+version = "1.0.0"
 authors = ["Ryan Lopopolo <rjl@hyperbo.la>"]
 license = "MIT"
 edition = "2021"

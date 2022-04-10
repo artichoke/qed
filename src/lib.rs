@@ -44,7 +44,7 @@
 //! ```
 
 #![no_std]
-#![doc(html_root_url = "https://docs.rs/qed/0.0.1")]
+#![doc(html_root_url = "https://docs.rs/qed/1.0.0")]
 
 // Ensure code blocks in README.md compile
 #[cfg(all(doctest, any(target_pointer_width = "32", target_pointer_width = "64")))]
