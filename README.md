@@ -23,7 +23,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-qed = "0.0.1"
+qed = "1.0.0"
 ```
 
 Then make compile time assertions like:
