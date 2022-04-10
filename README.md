@@ -31,7 +31,7 @@ Then make compile time assertions like:
 ```rust
 use core::num::NonZeroU8;
 
-qed::const_assert!(u32::BITS <= usize::BITS);
+qed::const_assert!(usize::BITS >= u32::BITS);
 qed::const_assert_eq!("Veni, vidi, vici".len(), "Cogito, ergo sum".len());
 qed::const_assert_ne!('∎'.len_utf8(), 0);
 qed::const_assert_matches!(NonZeroU8::new(42), Some(_));
