@@ -172,3 +172,50 @@ macro_rules! const_assert_matches {
         });
     };
 }
+
+/// Cast a [`u32`] to [`usize`] at runtime with a compile time assert that the
+/// cast is lossless and will not overflow.
+///
+/// This macro emits a compile time assertion that `usize` has at least as many
+/// bits as `u32`.
+///
+/// # Examples
+///
+/// ```
+/// # #![cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
+/// struct SymbolTable {
+///     next: u32,
+///     table: [&'static str; 1024],
+/// }
+///
+/// impl SymbolTable {
+///     pub fn new() -> Self {
+///         Self { next: 0, table: [""; 1024] }
+///     }
+///
+///     pub fn intern(&mut self, symbol: &'static str) -> u32 {
+///         let id = self.next;
+///         let idx = qed::lossless_cast_u32_to_usize!(id);
+///         self.table[idx] = symbol;
+///         self.next += 1;
+///         id
+///     }
+/// }
+///
+/// let mut table = SymbolTable::new();
+/// assert_eq!(table.intern("end of proof"), 0);
+/// ```
+///
+/// This macro requires a `u32` as its argument:
+///
+/// ```compile_fail
+/// qed::lossless_cast_u32_to_usize!(0_i32);
+/// ```
+#[macro_export]
+macro_rules! lossless_cast_u32_to_usize {
+    ($num:expr) => {{
+        $crate::const_assert!(usize::BITS >= u32::BITS);
+        let num: u32 = $num;
+        num as usize
+    }};
+}
