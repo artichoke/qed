@@ -30,7 +30,7 @@
 //! ```
 //! # use core::num::NonZeroU8;
 //! # #[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
-//! qed::const_assert!(u32::BITS <= usize::BITS);
+//! qed::const_assert!(usize::BITS >= u32::BITS);
 //! qed::const_assert_eq!("Veni, vidi, vici".len(), "Cogito, ergo sum".len());
 //! qed::const_assert_ne!('∎'.len_utf8(), 0);
 //! qed::const_assert_matches!(NonZeroU8::new(42), Some(_));
@@ -75,7 +75,7 @@ mod readme {}
 /// // Assert at compile time that the target platform has at least 32-bit
 /// // `usize`.
 /// # #[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
-/// qed::const_assert!(u32::BITS <= usize::BITS);
+/// qed::const_assert!(usize::BITS >= u32::BITS);
 /// ```
 ///
 /// Assertion failures will result in a compile error:
