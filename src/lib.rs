@@ -183,16 +183,13 @@ macro_rules! const_assert_matches {
 ///
 /// ```
 /// # #![cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
+/// #[derive(Default)]
 /// struct SymbolTable {
 ///     next: u32,
-///     table: [&'static str; 1024],
+///     table: [&'static str; 32],
 /// }
 ///
 /// impl SymbolTable {
-///     pub fn new() -> Self {
-///         Self { next: 0, table: [""; 1024] }
-///     }
-///
 ///     pub fn intern(&mut self, symbol: &'static str) -> u32 {
 ///         let id = self.next;
 ///         let idx = qed::lossless_cast_u32_to_usize!(id);
@@ -202,8 +199,9 @@ macro_rules! const_assert_matches {
 ///     }
 /// }
 ///
-/// let mut table = SymbolTable::new();
+/// let mut table = SymbolTable::default();
 /// assert_eq!(table.intern("end of proof"), 0);
+/// assert_eq!(table.intern("∎"), 1);
 /// ```
 ///
 /// This macro requires a `u32` as its argument:
