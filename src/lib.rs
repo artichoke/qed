@@ -43,7 +43,7 @@
 //! ```
 
 #![no_std]
-#![doc(html_root_url = "https://docs.rs/qed/1.2.0")]
+#![doc(html_root_url = "https://docs.rs/qed/1.3.0")]
 
 #[cfg(any(test, doc))]
 extern crate std;
@@ -380,6 +380,57 @@ macro_rules! const_cstr_from_bytes {
     }};
 }
 
+/// Construct a const [`CStr`] from the given `str` at compile time and assert
+/// that the given `str` bytes are a valid `CStr` (NUL terminated with no
+/// interior NUL bytes).
+///
+/// [`CStr`]: std::ffi::CStr
+///
+/// This macro emits a compile error if the given slice contains any interior
+/// NUL bytes or does not have a NUL terminator.
+///
+/// # Examples
+///
+/// ```
+/// use std::ffi::CStr;
+///
+/// const ARRAY_CLASS_CSTR: &CStr = qed::const_cstr_from_str!("Array\0");
+/// ```
+///
+/// The following fails to compile because the `str` slice contains an interior
+/// NUL byte:
+///
+/// ```compile_fail
+/// use std::ffi::CStr;
+///
+/// const CSTR: &CStr = qed::const_cstr_from_str!("abc\0xyz");
+/// ```
+///
+/// The following fails to compile because the `str` slice does not contain a NUL
+/// terminator:
+///
+/// ```compile_fail
+/// use std::ffi::CStr;
+///
+/// const CSTR: &CStr = qed::const_cstr_from_str!("Q.E.D.");
+/// ```
+///
+/// The following fails to compile because the empty string is not a valid
+/// `CStr`:
+///
+/// ```compile_fail
+/// use std::ffi::CStr;
+///
+/// const CSTR: &CStr = qed::const_cstr_from_str!("");
+/// ```
+#[macro_export]
+macro_rules! const_cstr_from_str {
+    ($str:expr $(,)?) => {{
+        const STRING: &str = $str;
+        $crate::const_cstr_from_bytes!(STRING.as_bytes())
+    }};
+}
+
 #[cfg(test)]
 mod tests {
     use core::num::NonZeroU8;
@@ -462,6 +513,14 @@ mod tests {
     fn const_cstr_from_bytes_no_warnings() {
         const CSTR: &CStr = crate::const_cstr_from_bytes!("Array\0".as_bytes());
         const EMPTY: &CStr = crate::const_cstr_from_bytes!("\0".as_bytes());
+        assert_eq!(CSTR.to_bytes(), b"Array");
+        assert!(EMPTY.to_bytes().is_empty());
+    }
+
+    #[test]
+    fn const_cstr_from_str_no_warnings() {
+        const CSTR: &CStr = crate::const_cstr_from_str!("Array\0");
+        const EMPTY: &CStr = crate::const_cstr_from_str!("\0");
         assert_eq!(CSTR.to_bytes(), b"Array");
         assert!(EMPTY.to_bytes().is_empty());
     }
