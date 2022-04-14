@@ -46,7 +46,7 @@ jobs:
         run: cargo test --no-default-features
 
   build-msrv:
-    name: Build (1.59.0)
+    name: Build (MSRV)
     runs-on: ubuntu-latest
     env:
       CARGO_INCREMENTAL: 0
