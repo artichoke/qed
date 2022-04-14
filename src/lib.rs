@@ -45,7 +45,7 @@
 #![no_std]
 #![doc(html_root_url = "https://docs.rs/qed/1.2.0")]
 
-#[cfg(test)]
+#[cfg(any(test, doc))]
 extern crate std;
 
 // Ensure code blocks in README.md compile
@@ -298,6 +298,8 @@ macro_rules! const_assert_bytes_has_no_nul {
 /// Construct a const [`CStr`] from the given bytes at compile time and assert
 /// that the given bytes are a valid `CStr` (NUL terminated with no interior NUL
 /// bytes).
+///
+/// [`CStr`]: std::ffi::CStr
 ///
 /// This macro emits a compile error if the given slice contains any interior
 /// NUL bytes or does not have a NUL terminator.
