@@ -11,7 +11,6 @@
 #![warn(trivial_casts, trivial_numeric_casts)]
 #![warn(unused_qualifications)]
 #![warn(variant_size_differences)]
-#![forbid(unsafe_code)]
 // Enable feature callouts in generated documentation:
 // https://doc.rust-lang.org/beta/unstable-book/language-features/doc-cfg.html
 //
@@ -44,7 +43,10 @@
 //! ```
 
 #![no_std]
-#![doc(html_root_url = "https://docs.rs/qed/1.1.0")]
+#![doc(html_root_url = "https://docs.rs/qed/1.2.0")]
+
+#[cfg(test)]
+extern crate std;
 
 // Ensure code blocks in README.md compile
 #[cfg(all(doctest, any(target_pointer_width = "32", target_pointer_width = "64")))]
@@ -244,9 +246,142 @@ macro_rules! const_assert_size_eq {
     };
 }
 
+/// Asserts that a byte slice does not contain any NUL (`\0`) bytes.
+///
+/// This macro emits a compile error if the given slice contains any NUL bytes,
+/// including a NUL terminator.
+///
+/// # Examples
+///
+/// ```
+/// const ARRAY_CLASS: &[u8] = b"Array";
+/// qed::const_assert_bytes_has_no_nul!(ARRAY_CLASS);
+/// ```
+///
+/// The following fails to compile because the byte slice contains a NUL byte:
+///
+/// ```compile_fail
+/// const BYTES: &[u8] = b"abc\0xyz";
+/// qed::const_assert_bytes_has_no_nul!(BYTES);
+/// ```
+///
+/// The following fails to compile because the byte slice contains a NUL
+/// terminator:
+///
+/// ```compile_fail
+/// const CSTR: &[u8] = b"Q.E.D.\x00";
+/// qed::const_assert_bytes_has_no_nul!(CSTR);
+/// ```
+#[macro_export]
+macro_rules! const_assert_bytes_has_no_nul {
+    ($bytes:expr $(,)?) => {
+        $crate::const_assert!({
+            const fn byte_slice_contains(slice: &[u8], elem: u8) -> bool {
+                let mut idx = 0;
+                loop {
+                    if idx >= slice.len() {
+                        return false;
+                    }
+                    if slice[idx] == elem {
+                        return true;
+                    }
+                    idx += 1;
+                }
+            }
+
+            const BYTES: &[u8] = $bytes;
+            !byte_slice_contains(BYTES, 0_u8)
+        });
+    };
+}
+
+/// Construct a const [`CStr`] from the given bytes at compile time and assert
+/// that the given bytes are a valid `CStr` (NUL terminated with no interior NUL
+/// bytes).
+///
+/// This macro emits a compile error if the given slice contains any interior
+/// NUL bytes or does not have a NUL terminator.
+///
+/// # Examples
+///
+/// ```
+/// use std::ffi::CStr;
+///
+/// const ARRAY_CLASS: &[u8] = b"Array\0";
+/// const ARRAY_CLASS_CSTR: &CStr = qed::const_cstr_from_bytes!(ARRAY_CLASS);
+/// ```
+///
+/// The following fails to compile because the byte slice contains an interior
+/// NUL byte:
+///
+/// ```compile_fail
+/// use std::ffi::CStr;
+///
+/// const BYTES: &[u8] = b"abc\0xyz";
+/// const BYTES_CSTR: &CStr = qed::const_cstr_from_bytes!(BYTES);
+/// ```
+///
+/// The following fails to compile because the byte slice does not contain a NUL
+/// terminator:
+///
+/// ```compile_fail
+/// use std::ffi::CStr;
+///
+/// const BYTES: &[u8] = b"Q.E.D.";
+/// const BYTES_CSTR: &CStr = qed::const_cstr_from_bytes!(BYTES);
+/// ```
+///
+/// The following fails to compile because the empty byte slice is not a valid
+/// `CStr`:
+///
+/// ```compile_fail
+/// use std::ffi::CStr;
+///
+/// const EMPTY: &[u8] = b"";
+/// const CSTR: &CStr = qed::const_cstr_from_bytes!(BYTES);
+/// ```
+#[macro_export]
+macro_rules! const_cstr_from_bytes {
+    ($bytes:expr $(,)?) => {{
+        const BYTES: &[u8] = $bytes;
+
+        $crate::const_assert!({
+            const fn byte_slice_is_cstr(slice: &[u8]) -> bool {
+                let mut idx = slice.len() - 1;
+                if slice[idx] != 0 {
+                    return false;
+                }
+                loop {
+                    if idx == 0 {
+                        return true;
+                    }
+                    idx -= 1;
+                    if slice[idx] == 0 {
+                        return false;
+                    }
+                }
+            }
+
+            byte_slice_is_cstr(BYTES)
+        });
+        // SAFETY
+        //
+        // The compile time assert above ensures the given bytes:
+        //
+        // - Are NUL terminated
+        // - Do not have any interior bytes
+        //
+        // which meets the safety criteria for `CStr::from_bytes_with_nul_unchecked`.
+        //
+        // https://doc.rust-lang.org/stable/std/ffi/struct.CStr.html#method.from_bytes_with_nul_unchecked
+        unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(BYTES) }
+    }};
+}
+
 #[cfg(test)]
 mod tests {
     use core::num::NonZeroU8;
+    use std::ffi::CStr;
 
     #[test]
     fn const_assert_no_warnings() {
@@ -313,5 +448,19 @@ mod tests {
     #[test]
     fn size_eq_pointer_transmute_no_warnings() {
         crate::const_assert_size_eq!(*mut u8, *const u8);
+    }
+
+    #[test]
+    fn const_assert_bytes_has_no_nul_no_warnings() {
+        crate::const_assert_bytes_has_no_nul!("abcdefg".as_bytes());
+        crate::const_assert_bytes_has_no_nul!("".as_bytes());
+    }
+
+    #[test]
+    fn const_cstr_from_bytes_no_warnings() {
+        const CSTR: &CStr = crate::const_cstr_from_bytes!("Array\0".as_bytes());
+        const EMPTY: &CStr = crate::const_cstr_from_bytes!("\0".as_bytes());
+        assert_eq!(CSTR.to_bytes(), b"Array");
+        assert!(EMPTY.to_bytes().is_empty());
     }
 }

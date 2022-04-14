@@ -23,7 +23,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-qed = "1.1.0"
+qed = "1.2.0"
 ```
 
 Then make compile time assertions like:
@@ -39,11 +39,12 @@ qed::const_assert_matches!(NonZeroU8::new(42), Some(_));
 
 ## `no_std`
 
-qed is `no_std` compatible.
+qed is `no_std` compatible although some macros may construct types which
+require `::std` to be available.
 
 ### Minimum Supported Rust Version
 
-This crate requires at least Rust 1.56.0. This version can be bumped in minor
+This crate requires at least Rust 1.59.0. This version can be bumped in minor
 releases.
 
 ## License

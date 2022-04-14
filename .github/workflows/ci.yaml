@@ -46,7 +46,7 @@ jobs:
         run: cargo test --no-default-features
 
   build-msrv:
-    name: Build (1.56.0)
+    name: Build (1.59.0)
     runs-on: ubuntu-latest
     env:
       CARGO_INCREMENTAL: 0
@@ -59,7 +59,7 @@ jobs:
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: "1.56.0"
+          toolchain: "1.59.0"
           profile: minimal
 
       - name: Compile
