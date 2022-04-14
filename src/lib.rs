@@ -44,7 +44,7 @@
 //! ```
 
 #![no_std]
-#![doc(html_root_url = "https://docs.rs/qed/1.0.0")]
+#![doc(html_root_url = "https://docs.rs/qed/1.1.0")]
 
 // Ensure code blocks in README.md compile
 #[cfg(all(doctest, any(target_pointer_width = "32", target_pointer_width = "64")))]
@@ -218,6 +218,32 @@ macro_rules! lossless_cast_u32_to_usize {
     }};
 }
 
+/// Asserts that two types have the same size at compile time.
+///
+/// See also [`const_assert!`].
+///
+/// # Examples
+///
+/// ```
+/// qed::const_assert_size_eq!(u8, i8);
+/// qed::const_assert_size_eq!([u32; 4], i128);
+/// qed::const_assert_size_eq!(&[u8], &str);
+/// ```
+///
+/// The following fails to compile because the types have different sizes:
+///
+/// ```compile_fail
+/// qed::const_assert_size_eq!(u8, u64);
+/// ```
+#[macro_export]
+macro_rules! const_assert_size_eq {
+    ($left:ty, $right:ty $(,)?) => {
+        const _: () = {
+            let _ = ::core::mem::transmute::<$left, $right>;
+        };
+    };
+}
+
 #[cfg(test)]
 mod tests {
     use core::num::NonZeroU8;
@@ -277,5 +303,15 @@ mod tests {
     fn lossless_cast_u32_usize_no_warnings_const() {
         const N: usize = crate::lossless_cast_u32_to_usize!(29_u32);
         assert_eq!(N, 29_usize);
+    }
+
+    #[test]
+    fn size_eq_reference_transmute_no_warnings() {
+        crate::const_assert_size_eq!(&[u8], &str);
+    }
+
+    #[test]
+    fn size_eq_pointer_transmute_no_warnings() {
+        crate::const_assert_size_eq!(*mut u8, *const u8);
     }
 }
