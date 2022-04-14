@@ -217,3 +217,44 @@ macro_rules! lossless_cast_u32_to_usize {
         num as usize
     }};
 }
+
+#[cfg(test)]
+mod tests {
+    use core::num::NonZeroU8;
+
+    #[test]
+    fn const_assert_no_warnings() {
+        crate::const_assert!(true);
+        crate::const_assert!(NonZeroU8::new(0).is_none());
+        crate::const_assert!(NonZeroU8::new(29).is_some());
+    }
+
+    #[test]
+    fn const_assert_eq_no_warnings() {
+        crate::const_assert_eq!(i8::BITS, u8::BITS);
+        crate::const_assert_eq!(u8::BITS, u8::BITS);
+    }
+
+    #[test]
+    fn const_assert_ne_no_warnings() {
+        crate::const_assert_ne!(u32::BITS, u8::BITS);
+    }
+
+    #[test]
+    fn const_assert_matches_no_warnings() {
+        crate::const_assert_matches!(NonZeroU8::new(0), None);
+        crate::const_assert_matches!(NonZeroU8::new(29), Some(x) if x.get() == 29);
+    }
+
+    #[test]
+    fn lossless_cast_u32_usize_no_warnings() {
+        let n = crate::lossless_cast_u32_to_usize!(29_u32);
+        assert_eq!(n, 29_usize);
+    }
+
+    #[test]
+    fn lossless_cast_u32_usize_no_warnings_const() {
+        const N: usize = crate::lossless_cast_u32_to_usize!(29_u32);
+        assert_eq!(N, 29_usize);
+    }
+}
