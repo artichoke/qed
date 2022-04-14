@@ -240,7 +240,6 @@ macro_rules! const_assert_size_eq {
     ($left:ty, $right:ty $(,)?) => {
         const _: () = {
             let _ = ::core::mem::transmute::<$left, $right>;
-            ()
         };
     };
 }
