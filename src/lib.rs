@@ -236,14 +236,35 @@ mod tests {
     }
 
     #[test]
+    fn const_assert_eq_no_warnings_literals() {
+        crate::const_assert_eq!(0, 0);
+        crate::const_assert_eq!(29_i32, 29_i32);
+    }
+
+    #[test]
     fn const_assert_ne_no_warnings() {
         crate::const_assert_ne!(u32::BITS, u8::BITS);
+    }
+
+    #[test]
+    fn const_assert_ne_no_warings_literals() {
+        crate::const_assert_ne!(9, 99);
+        crate::const_assert_ne!(0_i32, 29_i32);
     }
 
     #[test]
     fn const_assert_matches_no_warnings() {
         crate::const_assert_matches!(NonZeroU8::new(0), None);
         crate::const_assert_matches!(NonZeroU8::new(29), Some(x) if x.get() == 29);
+    }
+
+    #[test]
+    fn const_assert_matches_no_warnings_literals() {
+        crate::const_assert_matches!(None::<i8>, None);
+        crate::const_assert_matches!(Some(0_i8), Some(_));
+
+        crate::const_assert_matches!(None::<i8>, None::<i8>);
+        crate::const_assert_matches!(Some(0_i8), Some(0_i8));
     }
 
     #[test]
