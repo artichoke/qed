@@ -43,7 +43,7 @@
 //! ```
 
 #![no_std]
-#![doc(html_root_url = "https://docs.rs/qed/1.3.0")]
+#![doc(html_root_url = "https://docs.rs/qed/1.3.1")]
 
 #[cfg(any(test, doc))]
 extern crate std;
@@ -52,6 +52,10 @@ extern crate std;
 #[cfg(all(doctest, any(target_pointer_width = "32", target_pointer_width = "64")))]
 #[doc = include_str!("../README.md")]
 mod readme {}
+
+#[doc(hidden)]
+#[allow(missing_docs)]
+pub mod imp;
 
 /// Asserts that a boolean expression is true at compile time.
 ///
@@ -274,25 +278,11 @@ macro_rules! const_assert_size_eq {
 /// ```
 #[macro_export]
 macro_rules! const_assert_bytes_has_no_nul {
-    ($bytes:expr $(,)?) => {
-        $crate::const_assert!({
-            const fn byte_slice_contains(slice: &[u8], elem: u8) -> bool {
-                let mut idx = 0;
-                loop {
-                    if idx >= slice.len() {
-                        return false;
-                    }
-                    if slice[idx] == elem {
-                        return true;
-                    }
-                    idx += 1;
-                }
-            }
+    ($bytes:expr $(,)?) => {{
+        const _: &[u8] = $bytes;
 
-            const BYTES: &[u8] = $bytes;
-            !byte_slice_contains(BYTES, 0_u8)
-        });
-    };
+        $crate::const_assert!($crate::imp::find($bytes, 0_u8).is_none());
+    }};
 }
 
 /// Construct a const [`CStr`] from the given bytes at compile time and assert
@@ -345,27 +335,10 @@ macro_rules! const_assert_bytes_has_no_nul {
 #[macro_export]
 macro_rules! const_cstr_from_bytes {
     ($bytes:expr $(,)?) => {{
-        const BYTES: &[u8] = $bytes;
+        const _: &[u8] = $bytes;
 
-        $crate::const_assert!({
-            const fn byte_slice_is_cstr(slice: &[u8]) -> bool {
-                let mut idx = slice.len() - 1;
-                if slice[idx] != 0 {
-                    return false;
-                }
-                loop {
-                    if idx == 0 {
-                        return true;
-                    }
-                    idx -= 1;
-                    if slice[idx] == 0 {
-                        return false;
-                    }
-                }
-            }
+        $crate::const_assert!($crate::imp::is_cstr($bytes));
 
-            byte_slice_is_cstr(BYTES)
-        });
         // SAFETY
         //
         // The compile time assert above ensures the given bytes:
@@ -376,7 +349,7 @@ macro_rules! const_cstr_from_bytes {
         // which meets the safety criteria for `CStr::from_bytes_with_nul_unchecked`.
         //
         // https://doc.rust-lang.org/stable/std/ffi/struct.CStr.html#method.from_bytes_with_nul_unchecked
-        unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(BYTES) }
+        unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked($bytes) }
     }};
 }
 
@@ -523,5 +496,14 @@ mod tests {
         const EMPTY: &CStr = crate::const_cstr_from_str!("\0");
         assert_eq!(CSTR.to_bytes(), b"Array");
         assert!(EMPTY.to_bytes().is_empty());
+    }
+
+    #[test]
+    fn const_assert_bytes_has_no_nul_none_shadow() {
+        #[allow(dead_code)]
+        #[allow(non_upper_case_globals)]
+        const None: () = ();
+
+        crate::const_assert_bytes_has_no_nul!("abcdefg".as_bytes());
     }
 }
