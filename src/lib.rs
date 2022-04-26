@@ -513,6 +513,14 @@ mod tests {
     }
 
     #[test]
+    fn const_assert_bytes_has_no_nul_hygiene() {
+        #[allow(dead_code)]
+        #[allow(non_camel_case_types)]
+        struct u8 {}
+        crate::const_assert_bytes_has_no_nul!("abcdefg".as_bytes());
+    }
+
+    #[test]
     fn const_assert_hygiene_bool() {
         #[allow(dead_code)]
         #[allow(non_camel_case_types)]
