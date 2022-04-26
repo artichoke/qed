@@ -26,6 +26,13 @@ pub const fn contains_nul(slice: &[u8]) -> bool {
     matches!(find(slice, 0), Some(_))
 }
 
+// Assert that `usize` is at least `u32` and cast the given `u32` to `usize`.
+#[must_use]
+pub const fn lossless_cast_u32_to_usize(num: u32) -> usize {
+    crate::const_assert!(usize::BITS >= u32::BITS);
+    num as usize
+}
+
 pub mod types {
     // Type alias for `u8`.
     pub type U8 = u8;

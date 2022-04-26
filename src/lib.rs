@@ -214,11 +214,9 @@ macro_rules! const_assert_matches {
 /// ```
 #[macro_export]
 macro_rules! lossless_cast_u32_to_usize {
-    ($num:expr) => {{
-        $crate::const_assert!(usize::BITS >= u32::BITS);
-        let num: u32 = $num;
-        num as usize
-    }};
+    ($num:expr) => {
+        $crate::imp::lossless_cast_u32_to_usize($num)
+    };
 }
 
 /// Asserts that two types have the same size at compile time.
@@ -541,6 +539,24 @@ mod tests {
         #[allow(non_camel_case_types)]
         struct usize {}
         crate::const_assert!("".is_empty());
+    }
+
+    #[test]
+    fn lossless_u32_to_usize_hygiene_u32() {
+        #[allow(dead_code)]
+        #[allow(non_camel_case_types)]
+        struct u32 {}
+        let n = crate::lossless_cast_u32_to_usize!(29_u32);
+        assert_eq!(n, 29_usize);
+    }
+
+    #[test]
+    fn lossless_u32_to_usize_hygiene_usize() {
+        #[allow(dead_code)]
+        #[allow(non_camel_case_types)]
+        struct usize {}
+        let n = crate::lossless_cast_u32_to_usize!(29_u32);
+        assert_eq!(n, 29_usize);
     }
 
     #[test]
