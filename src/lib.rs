@@ -215,9 +215,9 @@ macro_rules! const_assert_matches {
 #[macro_export]
 macro_rules! lossless_cast_u32_to_usize {
     ($num:expr) => {{
-        $crate::const_assert!(usize::BITS >= u32::BITS);
-        let num: u32 = $num;
-        num as usize
+        $crate::const_assert!(::core::primitive::usize::BITS >= ::core::primitive::u32::BITS);
+        let num: ::core::primitive::u32 = $num;
+        num as ::core::primitive::usize
     }};
 }
 
@@ -276,7 +276,7 @@ macro_rules! const_assert_size_eq {
 #[macro_export]
 macro_rules! const_assert_bytes_has_no_nul {
     ($bytes:expr $(,)?) => {{
-        const _: &[$crate::imp::types::U8] = $bytes;
+        const _: &[::core::primitive::u8] = $bytes;
 
         $crate::const_assert!(!$crate::imp::contains_nul($bytes));
     }};
@@ -332,7 +332,7 @@ macro_rules! const_assert_bytes_has_no_nul {
 #[macro_export]
 macro_rules! const_cstr_from_bytes {
     ($bytes:expr $(,)?) => {{
-        const _: &[$crate::imp::types::U8] = $bytes;
+        const _: &[::core::primitive::u8] = $bytes;
 
         $crate::const_assert!($crate::imp::is_cstr($bytes));
 
@@ -396,7 +396,7 @@ macro_rules! const_cstr_from_bytes {
 #[macro_export]
 macro_rules! const_cstr_from_str {
     ($str:expr $(,)?) => {{
-        const _: &$crate::imp::types::Str = $str;
+        const _: &::core::primitive::str = $str;
 
         $crate::const_cstr_from_bytes!($str.as_bytes())
     }};
@@ -541,6 +541,24 @@ mod tests {
         #[allow(non_camel_case_types)]
         struct usize {}
         crate::const_assert!("".is_empty());
+    }
+
+    #[test]
+    fn lossless_u32_to_usize_hygiene_u32() {
+        #[allow(dead_code)]
+        #[allow(non_camel_case_types)]
+        struct u32 {}
+        let n = crate::lossless_cast_u32_to_usize!(29_u32);
+        assert_eq!(n, 29_usize);
+    }
+
+    #[test]
+    fn lossless_u32_to_usize_hygiene_usize() {
+        #[allow(dead_code)]
+        #[allow(non_camel_case_types)]
+        struct usize {}
+        let n = crate::lossless_cast_u32_to_usize!(29_u32);
+        assert_eq!(n, 29_usize);
     }
 
     #[test]
