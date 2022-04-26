@@ -404,8 +404,12 @@ macro_rules! const_cstr_from_str {
 
 #[cfg(test)]
 mod tests {
-    use core::num::NonZeroU8;
-    use std::ffi::CStr;
+    use ::core::num::NonZeroU8;
+    use ::std::ffi::CStr;
+
+    mod core {}
+    mod std {}
+    mod imp {}
 
     #[test]
     fn const_assert_no_warnings() {
