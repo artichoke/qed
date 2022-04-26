@@ -94,9 +94,9 @@ macro_rules! const_assert {
     ($x:expr $(,)?) => {
         #[allow(unknown_lints, clippy::eq_op)]
         const _: [(); 0 - !{
-            const ASSERT: bool = $x;
+            const ASSERT: $crate::imp::types::Bool = $x;
             ASSERT
-        } as usize] = [];
+        } as $crate::imp::types::Usize] = [];
     };
 }
 
@@ -280,7 +280,7 @@ macro_rules! const_assert_size_eq {
 #[macro_export]
 macro_rules! const_assert_bytes_has_no_nul {
     ($bytes:expr $(,)?) => {{
-        const _: &[u8] = $bytes;
+        const _: &[$crate::imp::types::U8] = $bytes;
 
         $crate::const_assert!(!$crate::imp::contains_nul($bytes));
     }};
@@ -336,7 +336,7 @@ macro_rules! const_assert_bytes_has_no_nul {
 #[macro_export]
 macro_rules! const_cstr_from_bytes {
     ($bytes:expr $(,)?) => {{
-        const _: &[u8] = $bytes;
+        const _: &[$crate::imp::types::U8] = $bytes;
 
         $crate::const_assert!($crate::imp::is_cstr($bytes));
 
@@ -400,8 +400,9 @@ macro_rules! const_cstr_from_bytes {
 #[macro_export]
 macro_rules! const_cstr_from_str {
     ($str:expr $(,)?) => {{
-        const STRING: &str = $str;
-        $crate::const_cstr_from_bytes!(STRING.as_bytes())
+        const _: &$crate::imp::types::Str = $str;
+
+        $crate::const_cstr_from_bytes!($str.as_bytes())
     }};
 }
 
@@ -509,5 +510,64 @@ mod tests {
         const None: () = ();
 
         crate::const_assert_bytes_has_no_nul!("abcdefg".as_bytes());
+    }
+
+    #[test]
+    fn const_assert_bytes_has_no_nul_hygiene() {
+        #[allow(dead_code)]
+        #[allow(non_camel_case_types)]
+        struct u8 {}
+        crate::const_assert_bytes_has_no_nul!("abcdefg".as_bytes());
+    }
+
+    #[test]
+    fn const_assert_hygiene_bool() {
+        #[allow(dead_code)]
+        #[allow(non_camel_case_types)]
+        struct bool {}
+        crate::const_assert!("".is_empty());
+    }
+
+    #[test]
+    fn const_assert_hygiene_usize() {
+        #[allow(dead_code)]
+        #[allow(non_camel_case_types)]
+        struct usize {}
+        crate::const_assert!("".is_empty());
+    }
+
+    #[test]
+    fn const_cstr_from_bytes_hygiene() {
+        #[allow(dead_code)]
+        #[allow(non_camel_case_types)]
+        struct u8 {}
+        const _: &CStr = crate::const_cstr_from_str!("Abc\0");
+    }
+
+    #[test]
+    fn const_cstr_from_str_hygiene_str() {
+        #[allow(dead_code)]
+        #[allow(non_camel_case_types)]
+        struct str {}
+        const _: &CStr = crate::const_cstr_from_str!("Abc\0");
+    }
+
+    #[test]
+    fn const_cstr_from_str_hygiene_u8() {
+        #[allow(dead_code)]
+        #[allow(non_camel_case_types)]
+        struct u8 {}
+        const _: &CStr = crate::const_cstr_from_str!("Abc\0");
+    }
+
+    #[test]
+    fn const_cstr_from_str_hygiene_str_u8() {
+        #[allow(dead_code)]
+        #[allow(non_camel_case_types)]
+        struct str {}
+        #[allow(dead_code)]
+        #[allow(non_camel_case_types)]
+        struct u8 {}
+        const _: &CStr = crate::const_cstr_from_str!("Abc\0");
     }
 }
