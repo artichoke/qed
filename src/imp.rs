@@ -17,6 +17,26 @@ pub const fn is_cstr(slice: &[u8]) -> bool {
     matches!(find(slice, 0), Some(nul_pos) if nul_pos + 1 == slice.len())
 }
 
+// Enforce that the given argument is a `bool`. Returns the given argument.
+pub const fn assert_bool(b: bool) -> bool {
+    b
+}
+
+// Return the given `bool` cast to `usize`.
+pub const fn bool_as_idx(b: bool) -> usize {
+    b as usize
+}
+
+// Enforce that the given argument is a `&[u8]`. Returns the given argument.
+pub const fn assert_is_byte_slice(bytes: &[u8]) -> &[u8] {
+    bytes
+}
+
+// Enforce that the given argument is a `&str`. Returns the given argument.
+pub const fn assert_is_str(s: &str) -> &str {
+    s
+}
+
 #[cfg(test)]
 mod tests {
     use super::{find, is_cstr};
