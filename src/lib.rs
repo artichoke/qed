@@ -455,12 +455,14 @@ mod tests {
     }
 
     #[test]
+    #[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
     fn lossless_cast_u32_usize_no_warnings() {
         let n = crate::lossless_cast_u32_to_usize!(29_u32);
         assert_eq!(n, 29_usize);
     }
 
     #[test]
+    #[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
     fn lossless_cast_u32_usize_no_warnings_const() {
         const N: usize = crate::lossless_cast_u32_to_usize!(29_u32);
         assert_eq!(N, 29_usize);
