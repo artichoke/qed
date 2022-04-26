@@ -32,9 +32,9 @@ Then make compile time assertions like:
 use core::num::NonZeroU8;
 
 qed::const_assert!(usize::BITS >= u32::BITS);
-qed::const_assert_eq!("Veni, vidi, vici".len(), "Cogito, ergo sum".len());
-qed::const_assert_ne!('∎'.len_utf8(), 0);
-qed::const_assert_matches!(NonZeroU8::new(42), Some(_));
+qed::const_assert_eq!("Veni, vidi, vici".len(), 16);
+qed::const_assert_ne!('∎'.len_utf8(), 1);
+qed::const_assert_matches!(NonZeroU8::new(42), Some(nz) if nz.get() == 42);
 ```
 
 ## `no_std`

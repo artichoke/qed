@@ -30,9 +30,9 @@
 //! # use core::num::NonZeroU8;
 //! # #[cfg(any(target_pointer_width = "32", target_pointer_width = "64"))]
 //! qed::const_assert!(usize::BITS >= u32::BITS);
-//! qed::const_assert_eq!("Veni, vidi, vici".len(), "Cogito, ergo sum".len());
-//! qed::const_assert_ne!('∎'.len_utf8(), 0);
-//! qed::const_assert_matches!(NonZeroU8::new(42), Some(_));
+//! qed::const_assert_eq!("Veni, vidi, vici".len(), 16);
+//! qed::const_assert_ne!('∎'.len_utf8(), 1);
+//! qed::const_assert_matches!(NonZeroU8::new(42), Some(nz) if nz.get() == 42);
 //! ```
 //!
 //!
@@ -108,13 +108,13 @@ macro_rules! const_assert {
 /// # Examples
 ///
 /// ```
-/// qed::const_assert_eq!("Veni, vidi, vici".len(), "Cogito, ergo sum".len());
+/// qed::const_assert_eq!("Veni, vidi, vici".len(), 16);
 /// ```
 ///
 /// The following fails to compile because the expressions are not equal:
 ///
 /// ```compile_fail
-/// qed::const_assert_eq!("Carpe diem".len(), "Et tu, Brute?".len());
+/// qed::const_assert_eq!("Carpe diem".len(), 100);
 /// ```
 #[macro_export]
 macro_rules! const_assert_eq {
@@ -132,7 +132,7 @@ macro_rules! const_assert_eq {
 ///
 /// ```
 /// const END_OF_PROOF: char = '∎';
-/// qed::const_assert_ne!(END_OF_PROOF.len_utf8(), 0);
+/// qed::const_assert_ne!(END_OF_PROOF.len_utf8(), 1);
 /// ```
 ///
 /// The following fails to compile because the expressions are equal:
@@ -161,7 +161,8 @@ macro_rules! const_assert_ne {
 /// ```
 /// # use core::num::NonZeroU8;
 /// qed::const_assert_matches!(NonZeroU8::new(0), None);
-/// qed::const_assert_matches!(NonZeroU8::new(42), Some(_));
+/// qed::const_assert_matches!(NonZeroU8::new(29), Some(_));
+/// qed::const_assert_matches!(NonZeroU8::new(42), Some(nz) if nz.get() == 42);
 /// ```
 ///
 /// Assertion failures will result in a compile error:
@@ -442,6 +443,7 @@ mod tests {
     #[test]
     fn const_assert_matches_no_warnings() {
         crate::const_assert_matches!(NonZeroU8::new(0), None);
+        crate::const_assert_matches!(NonZeroU8::new(29), Some(_));
         crate::const_assert_matches!(NonZeroU8::new(29), Some(x) if x.get() == 29);
     }
 
