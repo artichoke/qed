@@ -28,11 +28,7 @@ pub const fn contains_nul(slice: &[u8]) -> bool {
 
 pub mod types {
     // Type alias for `u8`.
-    pub type Bool = bool;
-    // Type alias for `u8`.
     pub type U8 = u8;
-    // Type alias for `usize`.
-    pub type Usize = usize;
     // Type alias for `str`.
     pub type Str = str;
 }
