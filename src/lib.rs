@@ -341,7 +341,7 @@ macro_rules! const_cstr_from_bytes {
         // The compile time assert above ensures the given bytes:
         //
         // - Are NUL terminated
-        // - Do not have any interior bytes
+        // - Do not have any interior NUL bytes
         //
         // which meets the safety criteria for `CStr::from_bytes_with_nul_unchecked`.
         //
@@ -356,7 +356,7 @@ macro_rules! const_cstr_from_bytes {
 ///
 /// [`CStr`]: std::ffi::CStr
 ///
-/// This macro emits a compile error if the given slice contains any interior
+/// This macro emits a compile error if the given `str` contains any interior
 /// NUL bytes or does not have a NUL terminator.
 ///
 /// # Examples
