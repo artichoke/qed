@@ -544,6 +544,24 @@ mod tests {
     }
 
     #[test]
+    fn lossless_u32_to_usize_hygiene_u32() {
+        #[allow(dead_code)]
+        #[allow(non_camel_case_types)]
+        struct u32 {}
+        let n = crate::lossless_cast_u32_to_usize!(29_u32);
+        assert_eq!(n, 29_usize);
+    }
+
+    #[test]
+    fn lossless_u32_to_usize_hygiene_usize() {
+        #[allow(dead_code)]
+        #[allow(non_camel_case_types)]
+        struct usize {}
+        let n = crate::lossless_cast_u32_to_usize!(29_u32);
+        assert_eq!(n, 29_usize);
+    }
+
+    #[test]
     fn const_cstr_from_bytes_hygiene() {
         #[allow(dead_code)]
         #[allow(non_camel_case_types)]
