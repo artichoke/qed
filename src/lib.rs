@@ -92,11 +92,7 @@ pub mod imp;
 #[macro_export]
 macro_rules! const_assert {
     ($x:expr $(,)?) => {
-        #[allow(unknown_lints, clippy::eq_op)]
-        const _: [(); 0 - !{
-            const ASSERT: $crate::imp::types::Bool = $x;
-            ASSERT
-        } as $crate::imp::types::Usize] = [];
+        const _: () = ::core::assert!($x);
     };
 }
 
@@ -518,6 +514,17 @@ mod tests {
         #[allow(non_camel_case_types)]
         struct u8 {}
         crate::const_assert_bytes_has_no_nul!("abcdefg".as_bytes());
+    }
+
+    #[test]
+    fn const_assert_hygiene_assert() {
+        #[allow(unused_macros)]
+        macro_rules! assert {
+            ($e:expr) => {
+                panic!("::core::assert! was shadowed")
+            };
+        }
+        crate::const_assert!("".is_empty());
     }
 
     #[test]
