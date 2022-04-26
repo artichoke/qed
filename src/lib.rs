@@ -281,7 +281,7 @@ macro_rules! const_assert_bytes_has_no_nul {
     ($bytes:expr $(,)?) => {{
         const _: &[u8] = $bytes;
 
-        $crate::const_assert!($crate::imp::find($bytes, 0_u8).is_none());
+        $crate::const_assert!(!$crate::imp::contains_nul($bytes));
     }};
 }
 
