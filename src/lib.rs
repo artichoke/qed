@@ -43,7 +43,7 @@
 //! ```
 
 #![no_std]
-#![doc(html_root_url = "https://docs.rs/qed/1.3.1")]
+#![doc(html_root_url = "https://docs.rs/qed/1.4.0")]
 
 #[cfg(any(test, doc))]
 extern crate std;
