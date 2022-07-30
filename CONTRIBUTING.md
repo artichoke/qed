@@ -3,9 +3,11 @@
 👋 Hi and welcome to [Artichoke](https://github.com/artichoke). Thanks for
 taking the time to contribute! 💪💎🙌
 
-Artichoke aspires to be a Ruby 2.6.3-compatible implementation of the Ruby
-programming language.
-[There is lots to do](https://github.com/artichoke/artichoke/issues).
+Artichoke aspires to be a [recent MRI Ruby][mri-target]-compatible
+implementation of the Ruby programming language. [There is lots to do].
+
+[mri-target]:
+  https://github.com/artichoke/artichoke/blob/trunk/RUBYSPEC.md#mri-target
 
 qed is a compile time assertion framework.
 
@@ -205,7 +207,6 @@ Regular dependency bumps are handled by [@dependabot].
 
 [artichoke]: https://github.com/artichoke
 [there is lots to do]: https://github.com/artichoke/artichoke/issues
-[symbol-class]: https://ruby-doc.org/core-2.6.3/Symbol.html
 [filed an issue so we can fix it]:
   https://github.com/artichoke/artichoke/issues/new
 [file bugs specific to qed in this repository]:
