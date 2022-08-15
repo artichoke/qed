@@ -61,6 +61,7 @@ jobs:
         with:
           toolchain: "1.59.0"
           profile: minimal
+          override: true
 
       - name: Compile
         run: cargo build --verbose
