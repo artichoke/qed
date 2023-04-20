@@ -39,12 +39,13 @@ qed::const_assert_matches!(NonZeroU8::new(42), Some(nz) if nz.get() == 42);
 
 ## `no_std`
 
-qed is `no_std` compatible although some macros may construct types which
-require `::std` to be available.
+qed is `no_std` compatible and all macros only require [`core`].
+
+[`core`]: https://doc.rust-lang.org/stable/core/
 
 ### Minimum Supported Rust Version
 
-This crate requires at least Rust 1.59.0. This version can be bumped in minor
+This crate requires at least Rust 1.64.0. This version can be bumped in minor
 releases.
 
 ## License
