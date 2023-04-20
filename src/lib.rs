@@ -45,9 +45,6 @@
 #![no_std]
 #![doc(html_root_url = "https://docs.rs/qed/1.5.0")]
 
-#[cfg(any(test, doc))]
-extern crate std;
-
 // Ensure code blocks in `README.md` compile
 #[cfg(all(doctest, any(target_pointer_width = "32", target_pointer_width = "64")))]
 #[doc = include_str!("../README.md")]
@@ -286,7 +283,7 @@ macro_rules! const_assert_bytes_has_no_nul {
 /// that the given bytes are a valid `CStr` (NUL terminated with no interior NUL
 /// bytes).
 ///
-/// [`CStr`]: std::ffi::CStr
+/// [`CStr`]: core::ffi::CStr
 ///
 /// This macro emits a compile error if the given slice contains any interior
 /// NUL bytes or does not have a NUL terminator.
@@ -294,7 +291,7 @@ macro_rules! const_assert_bytes_has_no_nul {
 /// # Examples
 ///
 /// ```
-/// use std::ffi::CStr;
+/// use core::ffi::CStr;
 ///
 /// const ARRAY_CLASS: &[u8] = b"Array\0";
 /// const ARRAY_CLASS_CSTR: &CStr = qed::const_cstr_from_bytes!(ARRAY_CLASS);
@@ -304,7 +301,7 @@ macro_rules! const_assert_bytes_has_no_nul {
 /// NUL byte:
 ///
 /// ```compile_fail
-/// use std::ffi::CStr;
+/// use core::ffi::CStr;
 ///
 /// const BYTES: &[u8] = b"abc\0xyz";
 /// const BYTES_CSTR: &CStr = qed::const_cstr_from_bytes!(BYTES);
@@ -314,7 +311,7 @@ macro_rules! const_assert_bytes_has_no_nul {
 /// terminator:
 ///
 /// ```compile_fail
-/// use std::ffi::CStr;
+/// use core::ffi::CStr;
 ///
 /// const BYTES: &[u8] = b"Q.E.D.";
 /// const BYTES_CSTR: &CStr = qed::const_cstr_from_bytes!(BYTES);
@@ -324,7 +321,7 @@ macro_rules! const_assert_bytes_has_no_nul {
 /// `CStr`:
 ///
 /// ```compile_fail
-/// use std::ffi::CStr;
+/// use core::ffi::CStr;
 ///
 /// const EMPTY: &[u8] = b"";
 /// const CSTR: &CStr = qed::const_cstr_from_bytes!(BYTES);
@@ -346,7 +343,7 @@ macro_rules! const_cstr_from_bytes {
         // which meets the safety criteria for `CStr::from_bytes_with_nul_unchecked`.
         //
         // https://doc.rust-lang.org/stable/std/ffi/struct.CStr.html#method.from_bytes_with_nul_unchecked
-        unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked($bytes) }
+        unsafe { ::core::ffi::CStr::from_bytes_with_nul_unchecked($bytes) }
     }};
 }
 
@@ -354,7 +351,7 @@ macro_rules! const_cstr_from_bytes {
 /// that the given `str` bytes are a valid `CStr` (NUL terminated with no
 /// interior NUL bytes).
 ///
-/// [`CStr`]: std::ffi::CStr
+/// [`CStr`]: core::ffi::CStr
 ///
 /// This macro emits a compile error if the given `str` contains any interior
 /// NUL bytes or does not have a NUL terminator.
@@ -362,7 +359,7 @@ macro_rules! const_cstr_from_bytes {
 /// # Examples
 ///
 /// ```
-/// use std::ffi::CStr;
+/// use core::ffi::CStr;
 ///
 /// const ARRAY_CLASS_CSTR: &CStr = qed::const_cstr_from_str!("Array\0");
 /// ```
@@ -371,7 +368,7 @@ macro_rules! const_cstr_from_bytes {
 /// NUL byte:
 ///
 /// ```compile_fail
-/// use std::ffi::CStr;
+/// use core::ffi::CStr;
 ///
 /// const CSTR: &CStr = qed::const_cstr_from_str!("abc\0xyz");
 /// ```
@@ -380,7 +377,7 @@ macro_rules! const_cstr_from_bytes {
 /// terminator:
 ///
 /// ```compile_fail
-/// use std::ffi::CStr;
+/// use core::ffi::CStr;
 ///
 /// const CSTR: &CStr = qed::const_cstr_from_str!("Q.E.D.");
 /// ```
@@ -389,7 +386,7 @@ macro_rules! const_cstr_from_bytes {
 /// `CStr`:
 ///
 /// ```compile_fail
-/// use std::ffi::CStr;
+/// use core::ffi::CStr;
 ///
 /// const CSTR: &CStr = qed::const_cstr_from_str!("");
 /// ```
@@ -404,8 +401,8 @@ macro_rules! const_cstr_from_str {
 
 #[cfg(test)]
 mod tests {
+    use ::core::ffi::CStr;
     use ::core::num::NonZeroU8;
-    use ::std::ffi::CStr;
 
     mod core {}
     mod std {}

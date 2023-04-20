@@ -4,6 +4,7 @@ version = "1.5.0"
 authors = ["Ryan Lopopolo <rjl@hyperbo.la>"]
 license = "MIT"
 edition = "2021"
+rust-version = "1.64.0"
 readme = "README.md"
 repository = "https://github.com/artichoke/qed"
 documentation = "https://docs.rs/qed"
