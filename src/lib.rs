@@ -48,7 +48,7 @@
 #[cfg(any(test, doc))]
 extern crate std;
 
-// Ensure code blocks in README.md compile
+// Ensure code blocks in `README.md` compile
 #[cfg(all(doctest, any(target_pointer_width = "32", target_pointer_width = "64")))]
 #[doc = include_str!("../README.md")]
 mod readme {}
