@@ -242,7 +242,7 @@ macro_rules! lossless_cast_u32_to_usize {
 macro_rules! const_assert_size_eq {
     ($left:ty, $right:ty $(,)?) => {
         const _: () = {
-            let _ = ::core::mem::transmute::<$left, $right>;
+            let _assert = ::core::mem::transmute::<$left, $right>;
         };
     };
 }
