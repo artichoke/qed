@@ -43,7 +43,7 @@
 //! ```
 
 #![no_std]
-#![doc(html_root_url = "https://docs.rs/qed/1.6.0")]
+#![doc(html_root_url = "https://docs.rs/qed/1.6.1")]
 
 // Ensure code blocks in `README.md` compile
 #[cfg(all(doctest, any(target_pointer_width = "32", target_pointer_width = "64")))]

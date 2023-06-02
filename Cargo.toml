@@ -1,6 +1,6 @@
 [package]
 name = "qed"
-version = "1.6.0"
+version = "1.6.1"
 authors = ["Ryan Lopopolo <rjl@hyperbo.la>"]
 license = "MIT"
 edition = "2021"
@@ -11,7 +11,7 @@ documentation = "https://docs.rs/qed"
 homepage = "https://github.com/artichoke/qed"
 description = "Compile-time assertions"
 keywords = ["assert", "const", "no_std", "static"]
-categories = ["no-std", "rust-patterns"]
+categories = ["no-std", "no-std::no-alloc", "rust-patterns"]
 include = ["src/**/*", "tests/**/*", "LICENSE", "README.md"]
 
 [dependencies]
