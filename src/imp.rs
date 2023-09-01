@@ -23,7 +23,7 @@ pub const fn is_cstr(slice: &[u8]) -> bool {
 // Returns true if the slice contains any NUL bytes.
 #[must_use]
 pub const fn contains_nul(slice: &[u8]) -> bool {
-    matches!(find(slice, 0), Some(_))
+    find(slice, 0).is_some()
 }
 
 #[cfg(test)]
