@@ -1,0 +1,5 @@
+var searchIndex = new Map(JSON.parse('[\
+["qed",{"doc":"Compile time assertions.","t":"QQQQQQQQQ","n":["const_assert","const_assert_bytes_has_no_nul","const_assert_eq","const_assert_matches","const_assert_ne","const_assert_size_eq","const_cstr_from_bytes","const_cstr_from_str","lossless_cast_u32_to_usize"],"q":[[0,"qed"]],"d":["Asserts that a boolean expression is true at compile time.","Asserts that a byte slice does not contain any NUL (<code>\\\\0</code>) …","Asserts that two expressions are equal to each other …","Asserts that an expression matches any of the given …","Asserts that two expressions are not equal to each other …","Asserts that two types have the same size at compile time.","Construct a const <code>CStr</code> from the given bytes at compile …","Construct a const <code>CStr</code> from the given <code>str</code> at compile time …","Cast a <code>u32</code> to <code>usize</code> at runtime with a compile time assert …"],"i":[0,0,0,0,0,0,0,0,0],"f":"`````````","c":[],"p":[],"b":[]}]\
+]'));
+if (typeof exports !== 'undefined') exports.searchIndex = searchIndex;
+else if (window.initSearch) window.initSearch(searchIndex);
