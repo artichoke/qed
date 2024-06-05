@@ -1,0 +1,21 @@
+{
+  "name": "@artichokeruby/qed",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Compile-time assertion macros",
+  "keywords": [
+    "assert",
+    "const",
+    "rust"
+  ],
+  "repository": "github:artichoke/qed",
+  "author": "Ryan Lopopolo <rjl@hyperbo.la> (https://hyperbo.la/)",
+  "homepage": "https://www.artichokeruby.org",
+  "bugs": "https://github.com/artichoke/qed/issues",
+  "devDependencies": {
+    "prettier": "3.2.5"
+  },
+  "scripts": {
+    "fmt": "prettier --write \"**/*\""
+  }
+}
