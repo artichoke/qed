@@ -518,6 +518,7 @@ mod tests {
     }
 
     #[test]
+    #[allow(clippy::const_is_empty)]
     fn const_assert_hygiene_assert() {
         #[allow(unused_macros)]
         macro_rules! assert {
@@ -529,6 +530,7 @@ mod tests {
     }
 
     #[test]
+    #[allow(clippy::const_is_empty)]
     fn const_assert_hygiene_bool() {
         #[allow(dead_code)]
         #[allow(non_camel_case_types)]
@@ -537,6 +539,7 @@ mod tests {
     }
 
     #[test]
+    #[allow(clippy::const_is_empty)]
     fn const_assert_hygiene_usize() {
         #[allow(dead_code)]
         #[allow(non_camel_case_types)]
